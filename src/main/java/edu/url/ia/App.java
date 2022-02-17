@@ -64,7 +64,7 @@ public class App  {
         problema.addConstraint(new AustraliaColoringConstraint("X", "W"));
 
         //Solucion
-        var solution = problema.backTrack();
+        Map<String, String> solution = problema.backTrack();
         System.out.println(solution);
 
     }
