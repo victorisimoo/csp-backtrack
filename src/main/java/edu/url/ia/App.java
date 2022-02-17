@@ -14,7 +14,7 @@ public class App  {
 
         //CSP
         //Variables
-        List<String> variables = List.of("Western Australia", "Nothern Territory", "Queensland", "South Australia",
+        /*List<String> variables = List.of("Western Australia", "Nothern Territory", "Queensland", "South Australia",
                 "New South Wales", "Victoria", "Tasmania");
 
         //Dominios
@@ -38,7 +38,21 @@ public class App  {
 
         //Solucion
         var solution = problema.backTrack();
-        System.out.println(solution);
+        System.out.println(solution);*/
+
+        List<Integer> columns = List.of(1, 2, 3, 4, 5, 6, 7, 8);
+        Map<Integer, List<Integer>> rows = new HashMap<>();
+        for (int column: columns){
+            rows.put(column, List.of(1, 2, 3, 4, 5, 6, 7, 8));
+        }
+        CSP<Integer, Integer> csp = new CSP<>(columns, rows);
+        csp.addConstraint(new QueensConstraint(columns));
+        Map<Integer, Integer> solution = csp.backTrack();
+        if(!(solution == null)){
+            System.out.println(solution);
+        }else {
+            System.out.println("No solution found!");
+        }
 
     }
 }
