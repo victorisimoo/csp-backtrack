@@ -20,7 +20,7 @@ public class App  {
         //Dominios
         Map<String, List<String>> domains = new HashMap<>();
         for (var variable: variables){
-            domains.put(variable, List.of("rojo", "verde", "azul"));
+            domains.put(variable, List.of("Cyan", "Magenta", "Yellow", "Key"));
         }
 
         //Restrictions
