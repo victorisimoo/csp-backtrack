@@ -83,6 +83,7 @@ public class CSP <V, D> {
             var inconsistencyOrigin = constraint.variables.stream().filter(v -> v != checkVariable).findFirst().get();
             inconsistencies.add(new ArcConsistency<V, D>(inconsistencyOrigin, checkVariable, constraint));
         }
+
         return AC3(inconsistencies);
     }
 
