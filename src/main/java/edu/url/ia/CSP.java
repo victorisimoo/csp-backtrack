@@ -57,14 +57,14 @@ public class CSP <V, D> {
         V unassigned = variables.stream().filter(v -> !assigment.containsKey(v)).findFirst().get();
         this.currentDomains = currentDomains;
         for (D value: this.currentDomains.get(unassigned)) {
-            System.out.println("Variable: " + unassigned + " = "+value);
+            //System.out.println("Variable: " + unassigned + " = "+value);
             Map<V, D> localAssigment = new HashMap<>(assigment);
             localAssigment.put(unassigned, value);
             if(consistent(unassigned, localAssigment)){
-                ArrayList<D> newDomain = new ArrayList<>();
-                newDomain.add(value);
-                this.currentDomains.put(unassigned, newDomain);
-                if(!checkArcConsistency(unassigned)){
+                ArrayList<D> actualDomain = new ArrayList<>();
+                actualDomain.add(value);
+                this.currentDomains.put(unassigned, actualDomain);
+                if(!checkConsistency(unassigned)){
                     return null;
                 }
                 Map<V, D> result = backTrack(localAssigment, currentDomains);
@@ -77,26 +77,26 @@ public class CSP <V, D> {
         return null;
     }
 
-    public boolean checkArcConsistency(V changedVariable){
+    public boolean checkConsistency(V checkVariable){
         Queue<ArcConsistency<V, D>> inconsistencies = new ArrayDeque<>();
-        for(Constraint<V, D> constraint: this.constraints.get(changedVariable)){
-            var inconsistencyOrigin = constraint.variables.stream().filter(v -> v != changedVariable).findFirst().get();
-            inconsistencies.add(new ArcConsistency<V, D>(inconsistencyOrigin, changedVariable, constraint));
+        for(Constraint<V, D> constraint: this.constraints.get(checkVariable)){
+            var inconsistencyOrigin = constraint.variables.stream().filter(v -> v != checkVariable).findFirst().get();
+            inconsistencies.add(new ArcConsistency<V, D>(inconsistencyOrigin, checkVariable, constraint));
         }
         return AC3(inconsistencies);
     }
 
     private boolean AC3(Queue<ArcConsistency<V, D>> inconsistencies){
         while(!inconsistencies.isEmpty()){
-            var currentArc = inconsistencies.poll();
-            if(Revise(currentArc)){
-                if(this.currentDomains.get(currentArc.getOrigin()).size() == 0){
+            var actualARC = inconsistencies.poll();
+            if(Revise(actualARC)){
+                if(this.currentDomains.get(actualARC.getOrigin()).size() == 0){
                     return false;
                 }
-                for (Constraint<V, D> constraint : this.constraints.get(currentArc.getOrigin())){
-                    var inconsistencyOrigin = constraint.variables.stream().filter(v -> v != currentArc.getOrigin()).findFirst().get();
-                    if(inconsistencyOrigin != currentArc.getDestiny()){
-                        inconsistencies.add(new ArcConsistency<V, D>(inconsistencyOrigin, currentArc.getOrigin(), constraint));
+                for (Constraint<V, D> constraint : this.constraints.get(actualARC.getOrigin())){
+                    var inconsistencyOrigin = constraint.variables.stream().filter(v -> v != actualARC.getOrigin()).findFirst().get();
+                    if(inconsistencyOrigin != actualARC.getDestiny()){
+                        inconsistencies.add(new ArcConsistency<V, D>(inconsistencyOrigin, actualARC.getOrigin(), constraint));
                     }
                 }
             }
@@ -105,8 +105,7 @@ public class CSP <V, D> {
     }
 
     private boolean Revise(ArcConsistency<V, D> arc){
-        var isModified = false;
-        var isValid = false;
+        boolean isValid;
         Map<V, D> newAssigment = new HashMap<>();
         for (var value: this.currentDomains.get(arc.getOrigin())){
             isValid = false;
@@ -119,44 +118,11 @@ public class CSP <V, D> {
                 }
             }
             if(!isValid){
-                var newDomain = this.currentDomains.get(arc.getOrigin()).stream().filter(d -> d != value).collect(Collectors.toList());
+                List<D> newDomain = this.currentDomains.get(arc.getOrigin()).stream().filter(d -> d != value).collect(Collectors.toList());
                 this.currentDomains.put(arc.getOrigin(), newDomain);
-                isModified = true;
+                return true;
             }
         }
-        return isModified;
+        return false;
     }
-
-    /*public Map<V, D> backTrack(Map<V, D> assigment){
-        //Condición de escape: si la asignación es completa (si cada variable tiene un valor)
-        if(variables.size() == assigment.size()){
-            return assigment;
-        }
-
-        // Seleccionar una variable no asignada
-        V unassigned =  variables.stream()
-                .filter(v -> !assigment.containsKey(v))
-                .findFirst().get();
-
-        for (D value : domains.get(unassigned)){
-            System.out.println("Variable: " + unassigned + " valor: " +value);
-
-            //Probar una asignación
-            //1. Crear una copia de la asignación anterior
-            Map<V, D> localAssiment = new HashMap<>(assigment);
-
-            //2. Probar (asignar un valor)
-            localAssiment.put(unassigned, value);
-
-            //3. Verificar la consistencia de la asignación
-            if(consistent(unassigned, localAssiment)){
-                Map<V, D> result = backTrack(localAssiment);
-                if(result != null){
-                    return result;
-                }
-            }
-        }
-        return null;
-    }*/
-
 }
