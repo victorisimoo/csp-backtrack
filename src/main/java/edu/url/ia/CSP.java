@@ -57,7 +57,7 @@ public class CSP <V, D> {
         V unassigned = variables.stream().filter(v -> !assigment.containsKey(v)).findFirst().get();
         this.currentDomains = currentDomains;
         for (D value: this.currentDomains.get(unassigned)) {
-            //System.out.println("Variable: " + unassigned + " = "+value);
+            //System.out.println("(" + unassigned + "," + value + ")");
             Map<V, D> localAssigment = new HashMap<>(assigment);
             localAssigment.put(unassigned, value);
             if(consistent(unassigned, localAssigment)){

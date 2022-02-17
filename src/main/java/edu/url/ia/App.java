@@ -17,6 +17,7 @@ public class App  {
         for (int column: columns){
             rows.put(column, List.of(1, 2, 3, 4, 5, 6, 7, 8));
         }
+
         CSP<Integer, Integer> csp = new CSP<>(columns, rows);
         csp.addConstraint(new QueensConstraint(columns));
         Map<Integer, Integer> solution = csp.backTrack();
