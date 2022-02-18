@@ -21,10 +21,10 @@ public class App  {
         CSP<Integer, Integer> csp = new CSP<>(columns, rows);
         csp.addConstraint(new QueensConstraint(columns));
         Map<Integer, Integer> solution = csp.backTrack();
-        if(!(solution == null)){
-            System.out.println(solution);
-        }else {
+        if(solution == null){
             System.out.println("No solution found!");
+        }else {
+            System.out.println(solution);
         }
 
     }
